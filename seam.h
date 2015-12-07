@@ -17,8 +17,6 @@ private:
 	string file;
 public:
 	SeamCarving(int, int, string);
-	void removeVertical();
-	void removeHorizontal();
 };
 
 #endif

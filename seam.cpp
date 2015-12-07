@@ -73,13 +73,13 @@ SeamCarving::SeamCarving(int vertical, int horizontal, string filename){
 	    		if(i != 0){
 	    			energy += abs(array[i][j] - array[i-1][j]);
 	    		}
-	    		if(rows-1 != i){
+	    		if(currVert-1 != i){
 	    			energy += abs(array[i][j] - array[i+1][j]);
 	    		}
 	    		if(j != 0){
 	    			energy += abs(array[i][j] - array[i][j-1]);
 	    		}
-	    		if(j != columns - 1){
+	    		if(j != currHoriz - 1){
 	    			energy += abs(array[i][j] - array[i][j+1]);
 	    		}
 	    		en[i][j] = energy;
@@ -101,7 +101,7 @@ SeamCarving::SeamCarving(int vertical, int horizontal, string filename){
 	    			combinedEn[i][j] = en[i][j] + 
 	    			min(combinedEn[i - 1][j], combinedEn[i - 1][j + 1]);
 	    		}
-	    		else if(j == columns - 1){
+	    		else if(j == currHoriz - 1){
 	    			combinedEn[i][j] = en[i][j] + 
 	    			min(combinedEn[i - 1][j], combinedEn[i - 1][j - 1]);
 	    		}
@@ -109,7 +109,6 @@ SeamCarving::SeamCarving(int vertical, int horizontal, string filename){
 	    			combinedEn[i][j] = en[i][j] + 
 	    			min(min(combinedEn[i - 1][j - 1], combinedEn[i - 1][j]), combinedEn[i - 1][j + 1]);
 	    		}
-	    		
 	    	}
 	    }
 	int smallest = INT_MAX;
@@ -162,13 +161,13 @@ SeamCarving::SeamCarving(int vertical, int horizontal, string filename){
 	    		if(i != 0){
 	    			energy += abs(array[i][j] - array[i-1][j]);
 	    		}
-	    		if(rows-1 != i){
+	    		if(currVert-1 != i){
 	    			energy += abs(array[i][j] - array[i+1][j]);
 	    		}
 	    		if(j != 0){
 	    			energy += abs(array[i][j] - array[i][j-1]);
 	    		}
-	    		if(j != columns - 1){
+	    		if(j != currHoriz - 1){
 	    			energy += abs(array[i][j] - array[i][j+1]);
 	    		}
 	    		en[i][j] = energy;
@@ -212,8 +211,8 @@ SeamCarving::SeamCarving(int vertical, int horizontal, string filename){
     
     
 	    for(int i = currHoriz-1; i >=0; i--){
-	    	for(int column = minCol; column < currVert; column++){
-	    		array[column][i] = array[column+1][i];
+	    	for(int row = minCol; row < currVert; row++){
+	    		array[row][i] = array[row+1][i];
 	    	}
 	    	if(minCol == 0){
 	    		if(combinedEn[minCol+1][i - 1] < combinedEn[minCol][i-1]){
