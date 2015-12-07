@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
 		string file = argv[1];
 		int vertical = atoi(argv[2]);
 		int horizontal = atoi(argv[3]);
-		cout << file << " vertical: " << vertical << " horizontal: " << horizontal << endl;
+		
 		SeamCarving seam(vertical, horizontal, file);
 	}
 	else{

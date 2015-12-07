@@ -11,6 +11,7 @@
 #include <sstream>
 #include <cmath>
 #include <algorithm>
+#include <climits>
 #include "seam.h"
 
 using namespace std;
@@ -59,55 +60,194 @@ SeamCarving::SeamCarving(int vertical, int horizontal, string filename){
     	}
     }
 
-    outfile << columns << " " << rows << '\n';
+   	
+   	int currVert = rows, currHoriz = columns;
+   
+   	for(int i = 0; i < vertical; i++){
+   		int en[currVert][currHoriz];
+  		
+	  	// Creates Energy Array
+	    for (int i = 0; i < currVert; i++){
+	    	for(int j = 0; j < currHoriz; j++){
+	    		int energy = 0;
+	    		if(i != 0){
+	    			energy += abs(array[i][j] - array[i-1][j]);
+	    		}
+	    		if(rows-1 != i){
+	    			energy += abs(array[i][j] - array[i+1][j]);
+	    		}
+	    		if(j != 0){
+	    			energy += abs(array[i][j] - array[i][j-1]);
+	    		}
+	    		if(j != columns - 1){
+	    			energy += abs(array[i][j] - array[i][j+1]);
+	    		}
+	    		en[i][j] = energy;
+	    		
+	    	}
+	    	
+	    }
+
+	    int combinedEn[currVert][currHoriz];
+
+	    //creates cumulative energy array
+	    for (int i = 0; i < currVert; i++){
+	    	for(int j = 0; j < currHoriz; j++){
+	       		
+	       		if(i == 0){
+	    			combinedEn[i][j] = en[i][j];
+	    		}
+	    		else if(j == 0){
+	    			combinedEn[i][j] = en[i][j] + 
+	    			min(combinedEn[i - 1][j], combinedEn[i - 1][j + 1]);
+	    		}
+	    		else if(j == columns - 1){
+	    			combinedEn[i][j] = en[i][j] + 
+	    			min(combinedEn[i - 1][j], combinedEn[i - 1][j - 1]);
+	    		}
+	    		else{
+	    			combinedEn[i][j] = en[i][j] + 
+	    			min(min(combinedEn[i - 1][j - 1], combinedEn[i - 1][j]), combinedEn[i - 1][j + 1]);
+	    		}
+	    		
+	    	}
+	    }
+	int smallest = INT_MAX;
+	int minCol = 0;
+
+	for(int i = 0; i < currHoriz; i++){
+		if(combinedEn[currVert-1][i] < smallest){
+			smallest = combinedEn[currVert - 1][i];
+			minCol = i;
+		}
+	}
+    
+	    
+	    for(int i = currVert-1; i >=0; i--){
+	    	for(int column = minCol; column < currHoriz; column++){
+	    		array[i][column] = array[i][column+1];
+	    	}
+	    	if(minCol == 0){
+	    		if(combinedEn[i - 1][minCol+1] < combinedEn[i-1][minCol]){
+	    			minCol+=1;
+	    			
+	    		}
+	    	}
+	    		else if(minCol == currHoriz-1){
+	    			if(combinedEn[i-1][minCol-1] <= combinedEn[i-1][minCol]){
+	    				minCol -= 1;
+	    			}
+	    		}
+	    		else{
+	    			if((combinedEn[i-1][minCol-1] <= combinedEn[i-1][minCol]) && (combinedEn[i-1][minCol-1] <= combinedEn[i-1][minCol+1])){
+	    				minCol -= 1;
+	    			}
+	    			if((combinedEn[i-1][minCol+1] < combinedEn[i-1][minCol]) && (combinedEn[i-1][minCol+1] < combinedEn[i-1][minCol-1])){
+	    				minCol += 1;
+	    				
+	    			}
+	    		}
+	    	
+	    }
+	    currHoriz--;
+	}
+
+	for(int i = 0; i < horizontal; i++){
+   		int en[currVert][currHoriz];
+  		
+	  	// Creates Energy Array
+	    for (int i = 0; i < currVert; i++){
+	    	for(int j = 0; j < currHoriz; j++){
+	    		int energy = 0;
+	    		if(i != 0){
+	    			energy += abs(array[i][j] - array[i-1][j]);
+	    		}
+	    		if(rows-1 != i){
+	    			energy += abs(array[i][j] - array[i+1][j]);
+	    		}
+	    		if(j != 0){
+	    			energy += abs(array[i][j] - array[i][j-1]);
+	    		}
+	    		if(j != columns - 1){
+	    			energy += abs(array[i][j] - array[i][j+1]);
+	    		}
+	    		en[i][j] = energy;
+	    	}	
+	    }
+
+	    int combinedEn[currVert][currHoriz];
+
+	    //creates cumulative energy array
+	    for(int c = 0; c < currHoriz; c++){
+	    	for(int r = 0; r < currVert; r++){
+	       		
+	       		if(c == 0){
+	    			combinedEn[r][c] = en[r][c];
+	    		}
+	    		else if(r == 0){
+	    			combinedEn[r][c] = en[r][c] + 
+	    			min(combinedEn[r][c-1], combinedEn[r+1][c-1]);
+	    		}
+	    		else if(r == currVert - 1){
+	    			combinedEn[r][c] = en[r][c] + 
+	    			min(combinedEn[r][c-1], combinedEn[r-1][c-1]);
+	    		}
+	    		else{
+	    			combinedEn[r][c] = en[r][c] + 
+	    			min(min(combinedEn[r-1][c-1], combinedEn[r][c-1]), combinedEn[r+1][c-1]);
+	    		}
+	    	
+	    	}	
+	
+	   }
+	int smallest = INT_MAX;
+	int minCol = 0;
+
+	for(int i = 0; i < currVert; i++){
+		if(combinedEn[i][currHoriz-1] < smallest){
+			smallest = combinedEn[i][currHoriz-1];
+			minCol = i;
+		}
+	}
+    
+    
+	    for(int i = currHoriz-1; i >=0; i--){
+	    	for(int column = minCol; column < currVert; column++){
+	    		array[column][i] = array[column+1][i];
+	    	}
+	    	if(minCol == 0){
+	    		if(combinedEn[minCol+1][i - 1] < combinedEn[minCol][i-1]){
+	    			minCol+=1;
+	    			
+	    		}
+	    	}
+	    		else if(minCol == currHoriz-1){
+	    			if(combinedEn[minCol-1][i-1] <= combinedEn[minCol][i-1]){
+	    				minCol -= 1;
+	    			}
+	    		}
+	    		else{
+	    			if((combinedEn[minCol-1][i-1] <= combinedEn[minCol][i-1]) && (combinedEn[minCol-1][i-1] <= combinedEn[minCol+1][i-1])){
+	    				minCol -= 1;
+	    			}
+	    			if((combinedEn[minCol+1][i-1] < combinedEn[minCol][i-1]) && (combinedEn[minCol+1][i-1] < combinedEn[minCol-1][i-1])){
+	    				minCol += 1;
+	    				
+	    			}
+	    		}
+	    	
+	    }
+	   currVert--;
+	} 
+outfile << currHoriz << " " << currVert << '\n';
     outfile << size << '\n';
 
-    int en[rows][columns];
-  
-    for (int i = 0; i < rows; i++){
-    	for(int j = 0; j < columns; j++){
-    		int energy = 0;
-    		if(i != 0){
-    			energy += abs(array[i][j] - array[i-1][j]);
-    		}
-    		if(rows-1 != i){
-    			energy += abs(array[i][j] - array[i+1][j]);
-    		}
-    		if(j != 0){
-    			energy += abs(array[i][j] - array[i][j-1]);
-    		}
-    		if(j != columns - 1){
-    			energy += abs(array[i][j] - array[i][j+1]);
-    		}
-    		en[i][j] = energy;
-    		//outfile << en[i][j] << " ";
-    	}
-    	//outfile << '\n';
-    }
-
-    int seams[rows][columns];
-
-    for (int i = 0; i < rows; i++){
-    	for(int j = 0; j < columns; j++){
-       		
-       		if(i == 0){
-    			seams[i][j] = en[i][j];
-    		}
-    		else if(j == 0){
-    			seams[i][j] = en[i][j] + min(seams[i - 1][j], seams[i - 1][j + 1]);
-    		}
-    		else if(j == columns - 1){
-    			seams[i][j] = en[i][j] + min(seams[i - 1][j], seams[i - 1][j - 1]);
-    		}
-    		else{
-    			seams[i][j] = en[i][j] + min(min(seams[i - 1][j - 1], seams[i - 1][j]), seams[i - 1][j + 1]);
-    		}
-    		
-    		outfile << seams[i][j] << " ";
-    	}
-    	outfile << '\n';
-    }
-    
-
+for(int i = 0; i < currVert; i++){
+	for(int j = 0; j < currHoriz; j++){
+		outfile << array[i][j] << " ";
+	}
+	outfile << '\n';
+}
+   		
     outfile.close();
 }
