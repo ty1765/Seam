@@ -62,7 +62,7 @@ SeamCarving::SeamCarving(int vertical, int horizontal, string filename){
 
    	
    	int currVert = rows, currHoriz = columns;
-   
+// remove vertical seams
    	for(int i = 0; i < vertical; i++){
    		int en[currVert][currHoriz];
   		
@@ -121,7 +121,7 @@ SeamCarving::SeamCarving(int vertical, int horizontal, string filename){
 		}
 	}
     
-	    
+	// remove seams    
 	    for(int i = currVert-1; i >=0; i--){
 	    	for(int column = minCol; column < currHoriz; column++){
 	    		array[i][column] = array[i][column+1];
@@ -150,7 +150,7 @@ SeamCarving::SeamCarving(int vertical, int horizontal, string filename){
 	    }
 	    currHoriz--;
 	}
-
+// remove horizontal seams
 	for(int i = 0; i < horizontal; i++){
    		int en[currVert][currHoriz];
   		
@@ -209,7 +209,7 @@ SeamCarving::SeamCarving(int vertical, int horizontal, string filename){
 		}
 	}
     
-    
+    // remove seams
 	    for(int i = currHoriz-1; i >=0; i--){
 	    	for(int row = minCol; row < currVert; row++){
 	    		array[row][i] = array[row+1][i];
